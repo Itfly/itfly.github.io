@@ -1,0 +1,3 @@
+auto: true
+exclude: index.haml, application.scss
+pygments: true
