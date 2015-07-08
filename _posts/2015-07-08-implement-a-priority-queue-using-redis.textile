@@ -1,0 +1,14 @@
+--- 
+title: Implement a priority queue using redis
+layout: post
+---
+
+
+最近有一个项目需要使用消息队列发布数据，并在给定时间时处理数据，而非发布时立即处理。因此，无法使用 RabbitMQ 实现该消息队列。我们的实现方式是使用 redis "sorted set":http://redis.io/commands#sorted_set 实现满足需求的优先队列。
+Redis sorted set 跟 set 的区别是它有一个 score 值，它有如下特点：
+
+* 元素都是唯一的。因此，如果 “foo" 是其中一个元素，当再向该 set 中放入一个 "foo"时，”foo" 只会在 set 中保存一个
+* 每一个元素都有一个 score 值
+* 当 set 作为队列读取时，score 值低的元素先被取出
+
+在我们的项目中，
