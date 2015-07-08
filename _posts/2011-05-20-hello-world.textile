@@ -1,5 +1,0 @@
----
-layout: post
-title: Hello world
----
-Adventures of a Newbie in Mac World
