@@ -21,8 +21,30 @@ bc. public class IdTime {
 主要实现优先队列的add, remove, peek 操作，基于 redis的以下几个命令：zadd, zrangeByScoreWithScores, zrem实现，并用time 来计算score值。实现代码如下：
 
 bc. public class RedisPriorityQueue { 
-    private static final String QUEUE_NAME = "queue";
-    public void put(IdTime idTime) {
+    private static final String QUEUE_NAME = "publish_message";
+    public int size() {
+        Jedis jedis = borrowReadJedis();
+        try {
+            return jedis.llen(QUEUE_NAME).intValue();
+        } finally {
+            returnReadJedis(jedis);
+        }
+    }
+    public IdTime peek() {
+        Jedis jedis = borrowWriteJedis();
+        try {
+            Set<Tuple> set = jedis.zrangeWithScores(QUEUE_NAME, 0, 0);
+            if (CollectionUtils.isEmpty(set)) {
+                return null;
+            }
+            Tuple tuple = set.iterator().next();
+
+            return tuple2IdTime(tuple);
+        } finally {
+            returnReadJedis(jedis);
+        }
+    }
+    public void add(IdTime idTime) {
         Jedis jedis = borrowWriteJedis();
         try {
             String field = String.valueOf(idTime.getId());
@@ -42,21 +64,25 @@ bc. public class RedisPriorityQueue {
             returnWriteJedis(jedis);
         }
     }
-    /**
-     * Return the all the elements in the sorted set at key with time between
-     * 0 and maxTime (including elements with score equal to min or max).
-     * @param maxTime
-     * @param offset
-     * @param count
-     * @return
-     */
-    public List<IdTime> peekByTime(long maxTime, int offset, int count) {
-        Jedis jedis = borrowReadJedis();
+    public IdTime poll() {
+        Jedis jedis = borrowWriteJedis();
         try {
-            Set<Tuple> set = jedis.zrangeByScoreWithScores(QUEUE_NAME, 0, toScore(maxTime), offset, count);
-            return set.stream()
-                    .map(this::tuple2IdTime)
-                    .collect(Collectors.toList());
+            List<Object> unformatted;
+            IdTime idTime;
+            do {
+                jedis.watch(QUEUE_NAME);
+                Set<Tuple> set = jedis.zrangeWithScores(QUEUE_NAME, 0, 0);
+                if (CollectionUtils.isEmpty(set)) {
+                    return null;
+                }
+                Transaction tran = jedis.multi();
+                Tuple tuple = set.iterator().next();
+                idTime =  tuple2IdTime(tuple);
+                String field = String.valueOf(idTime.getId());
+                tran.zrem(QUEUE_NAME, field);
+                unformatted = tran.exec();
+            } while (unformatted == null);
+            return idTime;
         } finally {
             returnReadJedis(jedis);
         }
