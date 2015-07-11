@@ -4,11 +4,76 @@ layout: post
 ---
 
 
-最近有一个项目需要使用消息队列发布数据，并在给定时间时处理数据，而非发布时立即处理。因此，无法使用 RabbitMQ 实现该消息队列。我们的实现方式是使用 redis "sorted set":http://redis.io/commands#sorted_set 实现满足需求的优先队列。
+最近有一个项目需要使用队列传递消息，并在给定时间发布消息。消息在生成时会带上一个发布时间，当达到发布时间时需要立即发布该消息，且消息生成和发布分为位于两个不同的微服务中。在以前的项目中，我们会使用RabbitMQ用于消息传递。但是，这个项目中由于需要定时发布消息，因此该消息队列是一个优先队列，无法使用 RabbitMQ 。我们的实现方式是使用 redis "sorted set":http://redis.io/commands#sorted_set 实现优先队列。
 Redis sorted set 跟 set 的区别是它有一个 score 值，它有如下特点：
 
 * 元素都是唯一的。因此，如果 “foo" 是其中一个元素，当再向该 set 中放入一个 "foo"时，”foo" 只会在 set 中保存一个
 * 每一个元素都有一个 score 值
 * 当 set 作为队列读取时，score 值低的元素先被取出
 
-在我们的项目中，
+项目中的message可以简单描述为：
+bc.
+public class IdTime {
+    private int id;
+    private long time;
+}
+
+主要实现优先队列的add, remove, peek 操作，基于 redis的以下几个命令：zadd, zrangeByScoreWithScores, zrem实现，并用time 来计算score值。实现代码如下：
+bc.
+public class RedisPriorityQueue { 
+    private static final String QUEUE_NAME = "queue";
+    public void put(IdTime idTime) {
+        Jedis jedis = borrowWriteJedis();
+        try {
+            String field = String.valueOf(idTime.getId());
+            double score = toScore(idTime.getTime());
+            jedis.zadd(QUEUE_NAME, score, field);
+        } finally {
+            returnWriteJedis(jedis);
+        }
+    }
+    public boolean remove(IdTime idTime) {
+        Jedis jedis = borrowWriteJedis();
+        try {
+            String field = String.valueOf(idTime.getId());
+            long ret = jedis.zrem(QUEUE_NAME, field);
+            return ret > 0;
+        } finally {
+            returnWriteJedis(jedis);
+        }
+    }
+    /**
+     * Return the all the elements in the sorted set at key with time between
+     * 0 and maxTime (including elements with score equal to min or max).
+     * @param maxTime
+     * @param offset
+     * @param count
+     * @return
+     */
+    public List<IdTime> peekByTime(long maxTime, int offset, int count) {
+        Jedis jedis = borrowReadJedis();
+        try {
+            Set<Tuple> set = jedis.zrangeByScoreWithScores(QUEUE_NAME, 0, toScore(maxTime), offset, count);
+            return set.stream()
+                    .map(this::tuple2IdTime)
+                    .collect(Collectors.toList());
+
+        } finally {
+            returnReadJedis(jedis);
+        }
+    }
+    private double toScore(long time) {
+        return (double) (time << 8);
+    }
+    private long scoreToTime(double score) {
+        return ((long) score >> 8);
+    }
+    private IdTime tuple2IdTime(Tuple tuple) {
+        if (tuple == null) {
+            return null;
+        }
+        int id = NumberUtils.toInt(tuple.getElement());
+        long time = scoreToTime(tuple.getScore());
+        return new IdTime(id, time);
+    }
+}
