@@ -7,21 +7,21 @@ Log4j 是 Apache 的一个开源项目，使用 log4j，我们可以定义日志
 
 Spring Boot 升级 log4j2 需要移除原先的 log4j1.x的 maven 依赖。可以使用 mvn dependency:tree 找出所有的 log4j1.x 的依赖包，显示 exclusion:
 
-bc.    <dependency>
-            <groupId>org.apache.zookeeper</groupId>
-            <artifactId>zookeeper</artifactId>
-            <version>3.4.6</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>log4j</groupId>
-                    <artifactId>log4j</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>slf4j-log4j12</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
+bc. <dependency>
+         <groupId>org.apache.zookeeper</groupId>
+         <artifactId>zookeeper</artifactId>
+         <version>3.4.6</version>
+         <exclusions>
+             <exclusion>
+                 <groupId>log4j</groupId>
+                 <artifactId>log4j</artifactId>
+             </exclusion>
+             <exclusion>
+                 <groupId>org.slf4j</groupId>
+                 <artifactId>slf4j-log4j12</artifactId>
+             </exclusion>
+         </exclusions>
+    </dependency>
 
 同时，加入 log4j2的依赖，可以直接使用 spring-boot 提供的 starter：
 
@@ -51,9 +51,9 @@ bc. <dependency>
 lo4j2 支持xml, yaml, json, properties等配置方式，网上能找到的几乎都是xml配置。但是，xml配置太过繁琐，没有yaml方便。以下使用yaml配置。首先，需要引用 jackson-dataformat-yaml 包：
 
 bc. <dependency>
-  <groupId>com.fasterxml.jackson.dataformat</groupId>
-  <artifactId>jackson-dataformat-yaml</artifactId>
-  <version>2.6.0-rc4</version>
+    <groupId>com.fasterxml.jackson.dataformat</groupId>
+    <artifactId>jackson-dataformat-yaml</artifactId>
+    <version>2.6.0-rc4</version>
 </dependency>
 
 log4j2.yaml 配置文件如下：
@@ -67,7 +67,6 @@ bc. Configuration:
         value: fenbi-sheet.log
       - name: pattern
         value: "%d{yyyy-MM-dd HH:mm:ss} [%p] [%t] [%c] %m%n"
-
   status: "info"
   Appenders:
     RollingRandomAccessFile:
@@ -101,7 +100,7 @@ bc. Configuration:
           TimeBasedTriggeringPolicy: {}
    Raven:
      name: "Sentry"
-     dsn: "http://3b3ce7ccf9e34868bbaa7d9a8b2a3bae:b85ca3f8ab18408a8f816119cf9bb438@sentry.zhenguanyu.com/159"
+     dsn: "xxxxxxxxxxxxxx"
   Loggers:
     Logger:
       - name: RequestLogger
@@ -133,16 +132,12 @@ bc. ---
 # 测试服务环境
 spring:
     profiles: test
-
 logging.access.dir: /home/shared/log
 logging.config: classpath:log4j2.test.yaml
-
 ---
 # 线上服务环境
 spring:
     profiles: online
-
-zkServers: zk1,zk2,zk3,zk4,zk5
 logging.access.dir: /home/shared/log
 logging.config: classpath:log4j2.online.yaml
 
