@@ -1,7 +1,7 @@
 ---
 title: Spring Boot 项目如何配置 log4j2
 layout: post
-—---
+---
 
 Log4j 是 Apache 的一个开源项目，使用 log4j，我们可以定义日志的输出格式，日志级别，输出目的等。log4j2 是 log4j的升级版，主要特点是异步日志输出，性能较 log4j 有大幅度提升，特别适合高并发场景下。 log4j 使用目前很火的 disruptor 无锁并发队列，世道日志事件处理非常迅速。并且，增加了 nosql 的 appender，如：kafka, flume 等。
 
