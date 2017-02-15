@@ -1,0 +1,21 @@
+--- 
+title: How to split a big git branch into several branches and send code review requests respectively
+layout: post
+---
+
+# Let's say we have a feature branch myFeature that contains a lot of changes (because we want to test the feature locally end-to-end first before sending out any CRs). 
+# We need to create another branch that only contains a subset of changes, for example a common practice is to send interface changes first.  
+* git checkout -b myFeatureInterfaces origin/master 
+# If we have granular commits on the myFeature branch (one or many commits for interfaces, one or many commits for implementation etc.), we can cherry-pick specific commits to our target branch (myFeatureInterfaces).  
+* git cherry-pick eb5d25642 (assuming commit eb5d25642 contains interface changes). 
+# If our commits are not very granular and we only want to include specific files (or entire folders) in the CR, we can checkout them (replace the version in our current branch with the one from the myFeature branch):  
+* git checkout myFeature someInterfaceFile.cs 
+* git checkout myFeature private/Campaign/MT/Source/Interfaces 
+# Sometimes we only want to include changes to some parts of the file. For example, .csproj files may have a lot of changes, but we want to only include the addition of one specific file. In this case we can pass the "-p" parameter to the checkout command, then Git will interactively ask us what changes we want to include in the target branch.  
+* git checkout -p myFeature someProject.csproj 
+ 
+While this branch (myFeatureInterfaces) is being code reviewed, we can keep working on CRs for other parts of the feature. For example we can create a new branch that will have changes for the implementation CR: 
+* git checkout -b myFeatureImplementation myFeatureInterfaces 
+* Repeat steps 3-5 
+Note that we base the new branch off myFeatureInterfaces and not origin/master, because the interfaces have not been checked in to master yet (they are still under code review).
+
