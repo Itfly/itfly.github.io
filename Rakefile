@@ -5,7 +5,7 @@ task :post do
   name = title.gsub(/\s+/, '-')
   name = name.gsub(/[^a-zA-Z0-9_-]/, "").downcase
   time = Time.now.strftime("%Y-%m-%d")
-  File.open("_posts/#{time}-#{name}.textile", "w+") do |file|
+  File.open("_posts/#{time}-#{name}.md", "w+") do |file|
     file.puts <<-EOF
 --- 
 title: #{title}
@@ -13,5 +13,5 @@ layout: post
 ---
     EOF
   end
-  puts "Created '_posts/#{time}-#{name}.textile'"
+  puts "Created '_posts/#{time}-#{name}.md'"
 end

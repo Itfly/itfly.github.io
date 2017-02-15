@@ -44,78 +44,78 @@ redis 的以下几个命令：zadd, zrangeByScoreWithScores, zrem实现，并用
                 if (CollectionUtils.isEmpty(set)) {
                     return null;
                 }
-                
+
                 Tuple tuple = set.iterator().next();
                 return tuple2IdTime(tuple);
-             } finally {
- 					returnReadJedis(jedis);
- 				}
- 		 }
+             } finally { 
+                returnReadJedis(jedis); 
+             } 
+        }
  	
- 		 public void add(IdTime idTime) {
- 			 Jedis jedis = borrowWriteJedis();
- 			 try {
- 			 	 String field = String.valueOf(idTime.getId());
- 			 	 double score = toScore(idTime.getTime());
- 			 	 jedis.zadd(QUEUE_NAME, score, field);
- 			 } finally {
- 				 returnWriteJedis(jedis);
- 			 }
- 		 }
+	public void add(IdTime idTime) {
+	     Jedis jedis = borrowWriteJedis();
+	     try {
+	 	 String field = String.valueOf(idTime.getId());
+	 	 double score = toScore(idTime.getTime());
+	 	 jedis.zadd(QUEUE_NAME, score, field);
+	     } finally {
+		 returnWriteJedis(jedis);
+	     }
+	 }
  	     
- 	     public boolean remove(IdTime idTime) {
- 			 Jedis jedis = borrowWriteJedis();
- 			 try {
- 			 	 String field = String.valueOf(idTime.getId());
- 			 	 long ret = jedis.zrem(QUEUE_NAME, field);
- 			 	 
- 			 	 return ret > 0;
- 			 } finally {
- 			 	 returnWriteJedis(jedis);
- 			 }
- 		 }
- 		 
- 		 public IdTime poll() {
- 		 	 Jedis jedis = borrowWriteJedis();
- 		 	 try {
- 		 	 	 List<Object> unformatted;
- 		 	 	 IdTime idTime;
- 		 	 	 do {
- 		 	 	 	 jedis.watch(QUEUE_NAME);
- 		 	 	 	 Set<Tuple> set = jedis.zrangeWithScores(QUEUE_NAME, 0, 0);
- 		 	 	 	 if (CollectionUtils.isEmpty(set)) {
- 		 	 	 	 	 return null;
- 		 	 	 	 }
- 		 	 	 	 
- 		 	 	 	 Transaction tran = jedis.multi();
- 		 	 	 	 Tuple tuple = set.iterator().next();
- 		 	 	 	 idTime = tuple2IdTime(tuple);
- 		 	 	 	 String field = String.valueOf(idTime.getId());
- 		 	 	 	 tran.zrem(QUEUE_NAME, field);
- 		 	 	 	 unformatted = tran.exec();
- 		 	 	 } while (unformatted == null);
-         		 
-         		 return idTime;
-        	 } finally {
-             	 returnReadJedis(jedis);
-        	 }
+         public boolean remove(IdTime idTime) {
+	     Jedis jedis = borrowWriteJedis();
+	     try {
+	 	 String field = String.valueOf(idTime.getId());
+	 	 long ret = jedis.zrem(QUEUE_NAME, field);
+	 	 
+	 	 return ret > 0;
+	     } finally {
+	 	 returnWriteJedis(jedis);
+	     }
+	 }
+	 
+  	 public IdTime poll() {
+ 	     Jedis jedis = borrowWriteJedis();
+ 	     try {
+ 	 	 List<Object> unformatted;
+ 	 	 IdTime idTime;
+ 	 	 do {
+ 	 	 	 jedis.watch(QUEUE_NAME);
+ 	 	 	 Set<Tuple> set = jedis.zrangeWithScores(QUEUE_NAME, 0, 0);
+ 	 	 	 if (CollectionUtils.isEmpty(set)) {
+ 	 	 	 	 return null;
+ 	 	 	 }
+ 	 	 	 
+ 	 	 	 Transaction tran = jedis.multi();
+ 	 	 	 Tuple tuple = set.iterator().next();
+ 	 	 	 idTime = tuple2IdTime(tuple);
+ 	 	 	 String field = String.valueOf(idTime.getId());
+ 	 	 	 tran.zrem(QUEUE_NAME, field);
+ 	 	 	 unformatted = tran.exec();
+ 	 	 } while (unformatted == null);
+         
+         	return idTime;
+ 	    } finally {
+ 		returnReadJedis(jedis);
+ 	    }
     	 }
     
     	 private double toScore(long time) {
-        	 return (double) (time << 8);
+             return (double) (time << 8);
     	 }
     
     	 private long scoreToTime(double score) {
-        	 return ((long) score >> 8);
+             return ((long) score >> 8);
     	 }
     
     	 private IdTime tuple2IdTime(Tuple tuple) {
-        	 if (tuple  == null) {
-        		 return null;
-    	 	 }
-    	 
-    	 	 int id = NumberUtils.toInt(tuple.getElement());
-    	 	 long time = scoreToTime(tuple.getScore());
-    	 	 return new IdTime(id, time);
+    	     if (tuple  == null) {
+    		 return null;
+     	     }
+     
+     	     int id = NumberUtils.toInt(tuple.getElement());
+     	     long time = scoreToTime(tuple.getScore());
+     	     return new IdTime(id, time);
     	 }
     }
