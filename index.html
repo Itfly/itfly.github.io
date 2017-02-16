@@ -4,7 +4,7 @@ title: Itfly's Tech Blog
 ---
 <h1>On The Road</h1>
 <hr/>
-{% for post in site.posts %}
+{% for post in paginator.posts %}
 <div class='post'>
   <h2>
     <a href='{{ post.url }}'>{{ post.title }}</a>
@@ -14,3 +14,21 @@ title: Itfly's Tech Blog
   <a class='readmore' href='{{ post.url }}'>Readmore →</a>
 </div>
 {% endfor %}
+
+<!-- Pagination links -->
+<div class="pagination-panel">
+  <ul class="pagination-list">
+    {% if paginator.previous_page %}
+    <li><a class="btn btn-primary" href="{{ paginator.previous_page_path }}">Previous</a></li>
+    {% else %}
+    <li><a class="btn btn-primary disabled">Previous</a></li>
+    {% endif %}
+    <li><span>{{ paginator.page }} of {{ paginator.total_pages }}</span></li>
+    {% if paginator.next_page %}
+    <li><a class="btn btn-primary" href="{{ paginator.next_page_path }}">Next</a></li>
+    {% else %}
+    <li><a class="btn btn-primary disabled">Next</a></li>
+    {% endif %}
+  </ul> <!-- categories end -->
+</div> <!-- pagination-panel end -->
+

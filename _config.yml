@@ -1,3 +1,9 @@
-auto: true
-exclude: index.haml, application.scss
+exclude: 
+    - README.md
+    - Rakefile
 highlighter: rouge
+paginate: 2
+gems: [jekyll-paginate]
+safe: false
+paginate_path: /page:num
+
