@@ -6,8 +6,10 @@
     <link href='/stylesheets/grid.css' rel='stylesheet'>
     <link href='/stylesheets/application.css' rel='stylesheet'>
     <script src='https://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.js'></script>
-    <script src='/javascripts/jquery.flux-1.2.1.js'></script>
-    <script src='/javascripts/application.js'></script>
+    {% if page.slider %}
+      <script src='/javascripts/jquery.flux-1.2.1.js'></script>
+      <script src='/javascripts/application.js'></script>
+    {% endif %}
   </head>
   <body>
     <div class='container'>
@@ -23,13 +25,15 @@
         </div>
         <div class='clear'></div>
       </header>
-      <div id='slider'>
-        <img src='{{site.baseurl}}/images/slider/slider-1.jpg'>
-        <img src='{{site.baseurl}}/images/slider/slider-2.jpg'>
-        <img src='{{site.baseurl}}/images/slider/slider-3.jpg'>
-        <img src='{{site.baseurl}}/images/slider/slider-4.jpg'>
-        <img src='{{site.baseurl}}/images/slider/slider-5.jpg'>
-      </div>
+      {% if page.slider %}
+        <div id='slider'>
+          <img src='{{site.baseurl}}/images/slider/slider-1.jpg'>
+          <img src='{{site.baseurl}}/images/slider/slider-2.jpg'>
+          <img src='{{site.baseurl}}/images/slider/slider-3.jpg'>
+          <img src='{{site.baseurl}}/images/slider/slider-4.jpg'>
+          <img src='{{site.baseurl}}/images/slider/slider-5.jpg'>
+        </div>
+      {% endif %}
       <div id='content'>
         <div class='span-22 push-1'>
           {{ content }}
