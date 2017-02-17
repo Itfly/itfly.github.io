@@ -323,17 +323,21 @@ footer {
       border-radius: 3px; }
     #content .post .readmore {
       color: #74acd4;
+      padding-left: 1em;
       font-size: 10px;
       font-style: italic; }
     #content .post .readmore:hover {
+      padding-left: 1em;
       color: #C80B2F; }
     #content .pagination {
-      color: #74acd4;
+      color: #746858;
       font-size: 12px;
       text-align: center; }
     #content .pagination .newer-posts {
-      text-decoration:none; }
+      padding-right: 1em;
+      text-decoration: none; }
     #content .pagination .older-posts {
-      text-decoration:none; }
+      padding-left: 1em;
+      text-decoration: none; }
     #content .pagination .page-number {
-      color: #746858; }
+      color: #303023; }

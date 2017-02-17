@@ -64,7 +64,7 @@ log4j2.yaml 配置文件如下：
           - name: logPath
             value: /home/shared/log/
           - name: filename
-            value: fenbi-sheet.log
+            value: project-name.log
           - name: pattern
             value: "%d{yyyy-MM-dd HH:mm:ss} [%p] [%t] [%c] %m%n"
       status: "info"
@@ -91,13 +91,6 @@ log4j2.yaml 配置文件如下：
               pattern: "${pattern}"
             Policies:
               TimeBasedTriggeringPolicy: {}
-          - name: "RPCRequestFileAppender"
-            fileName: "${logPath}rpc-request-${filename}"
-            filePattern: "${logPath}rpc-request-${filename}-%d{yyyy-MM-dd}"
-            PatternLayout:
-              pattern: "${pattern}"
-            Policies:
-              TimeBasedTriggeringPolicy: {}
        Raven:
          name: "Sentry"
          dsn: "xxxxxxxxxxxxxx"
@@ -108,11 +101,6 @@ log4j2.yaml 配置文件如下：
             additivity: false
             AppenderRef:
               - ref: HTTPRequestFileAppender
-          - name: "RpcRequestLogger"
-            level: "info"
-            additivity: false
-            AppenderRef:
-              - ref: RPCRequestFileAppender
           - name: AnalysisLogger
             level: info
             additivity: false
