@@ -329,5 +329,11 @@ footer {
       color: #C80B2F; }
     #content .pagination {
       color: #74acd4;
-      font-size: 12px;
+      font-size: 10px;
       text-align: center; }
+    #content .pagination .newer-posts {
+      text-decoration:none; }
+    #content .pagination .older-posts {
+      text-decoration:none; }
+    #content .pagination .page-number {
+      color: #008080; }
