@@ -6,4 +6,5 @@ paginate: 5
 gems: [jekyll-paginate]
 safe: false
 paginate_path: /page:num
+disqus_shortname: itfly
 
