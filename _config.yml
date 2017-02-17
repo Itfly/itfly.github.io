@@ -2,7 +2,7 @@ exclude:
     - README.md
     - Rakefile
 highlighter: rouge
-paginate: 2
+paginate: 5
 gems: [jekyll-paginate]
 safe: false
 paginate_path: /page:num
