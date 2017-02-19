@@ -11,7 +11,7 @@ The following examples require this kind of demand:
 * A web crawler that constantly browses the web and scans through web pages to create the indices.
 * An application that process independent work items in the backgroud and in parallel (such as processing logs asynchronously).
 
-### Basic ideas
+## Basic ideas
 
 An in-memory task queue can satisfy this kind of demand. A task queue is a data structure maintained by task manager containing queue to store tasks and workers to run.
 
@@ -21,14 +21,14 @@ In this post, we will implement a feasible task queue using Java BlockingQueue. 
 * Multiple workers
 * Support retry
 
-### Java BlockingQueue
+## Java BlockingQueue
 
 Before moving on, let's introduce the Java BlockingQueue first. The Java BlockingQueue interface is in the java.util.concurrent package, its implentations are thread-safe, and all of its queuing methods are atomic in nature and use internal locks.
 
 There's four different behaviour of methods for inserting, removing and examining the elements in the queue with different ways of handling operations about throws exception, special value, blocks or timeout:
 
 |          | Throws exception |  Special value |  Blocks |  Timout               |
-|----------|------------------|----------------|---------|-----------------------|
+|----------|:------------------:|:----------------:|:---------:|:-----------------------:|
 |  Insert  |  add(e)          |  offer(e)      |  put(e) |  offer(e, time, unit) |
 |  Remove  |  remove()        |  poll()        |  take() |  poll(time, unit)     |
 |  Examine |  element()       |  peek()        |  -----  |  -----                |
@@ -48,7 +48,7 @@ There's five essential implementations in java.util.concurrent package for Block
 * PriorityBlockingQueue: It's an unbounded queue, and the elements in the queue have their own priority.
 * SynchronousQueue: There's only one element in the queue. A thread inserting an element into the queue is blocked until another thread takes that element from the queue.
 
-### Implementation the TaskQueue
+## Implementation the TaskQueue
 Let's give the TaskQueue's interface first, there's four method:
 
     public interface ITaskQueue<T> {
@@ -61,6 +61,7 @@ Let's give the TaskQueue's interface first, there's four method:
     	
     	void consume(T task);
 	}
+
 Then our TaskQueue should have one queue and one worker list. Also, we need two integer to record its capacity and worker count. So, here's its internal members:
 	    
 	protected BlockingQueue<T> queue;
