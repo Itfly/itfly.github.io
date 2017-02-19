@@ -63,6 +63,9 @@ footer {
         color: #303030; }
         #content .post h2 a:hover, #content .post h2 a:hover:hover {
           color: #303030; }
+    #content .post .publishdate {
+      font-size: 14px;
+      color: #757570; }
     #content .post p {
       margin-bottom: 10px; }
     #content .post img {
