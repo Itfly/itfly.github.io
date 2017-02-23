@@ -23,7 +23,7 @@ In this post, we will implement a feasible task queue using Java BlockingQueue. 
 
 ## Java BlockingQueue
 
-Before moving on, let's introduce the Java BlockingQueue first. The Java BlockingQueue interface is in the java.util.concurrent package, its implentations are thread-safe, and all of its queuing methods are atomic in nature and use internal locks.
+Before moving on, let's start by understanding the Java BlockingQueue first. The Java BlockingQueue interface is in the java.util.concurrent package, its implentations are thread-safe, and all of its queuing methods are atomic in nature and use internal locks.
 
 There's four different behaviour of methods for inserting, removing and examining the elements in the queue with different ways of handling operations about throws exception, special value, blocks or timeout:
 
