@@ -28,11 +28,12 @@ Before moving on, let's start by understanding the Java BlockingQueue first. The
 There's four different behaviour of methods for inserting, removing and examining the elements in the queue with different ways of handling operations about throws exception, special value, blocks or timeout:
 
 |          | Throws exception |  Special value |  Blocks |  Timout               |
-|----------|:------------------:|:----------------:|:---------:|:-----------------------:|
+|----------|------------------|----------------|---------|-----------------------|
 |  Insert  |  add(e)          |  offer(e)      |  put(e) |  offer(e, time, unit) |
 |  Remove  |  remove()        |  poll()        |  take() |  poll(time, unit)     |
-|  Examine |  element()       |  peek()        |  -----  |  -----                |
+|  Examine |  element()       |  peek()        |   |                 |
 
+<br>
 These 4 different behaviour means this:
 
 * Throws Exception: If the attempted operation is not possible immediately, an exception is thrown.

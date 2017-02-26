@@ -50,6 +50,20 @@ footer {
   #content h1 {
     padding: 0 0 10px;
     font: normal 22px "Lucida Grande", sans-serif; }
+  #content table {
+    margin-left: 16px;
+    margin-right: 16px;
+    border: thin solid black;
+    caption-side: bottom;
+    border-collapse: collapse; }
+  #content td, th {
+    padding: 6px;
+    border: thin solid gray; }
+  #content th {
+    text-align: center;
+    font-weight: bold; }
+  #content tr:hover {
+     background-color: #f5f5f5}
   #content .post {
     font-size: 12px;
     margin: 0 0 10px 0;
@@ -65,6 +79,7 @@ footer {
           color: #303030; }
     #content .post .publishdate {
       font-size: 14px;
+      font-weight: normal;
       color: #757570; }
     #content .post p {
       margin-bottom: 10px; }
